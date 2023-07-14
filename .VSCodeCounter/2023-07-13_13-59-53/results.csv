@@ -1,0 +1,41 @@
+"filename", "language", "JSON", "JavaScript", "JavaScript JSX", "Properties", "XML", "comment", "blank", "total"
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/.env", "Properties", 0, 0, 0, 1, 0, 0, 0, 1
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/App.js", "JavaScript", 0, 123, 0, 0, 0, 0, 9, 132
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/app.json", "JSON", 14, 0, 0, 0, 0, 23, 0, 37
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/assets/commitments/notFound.svg", "XML", 0, 0, 0, 0, 1, 0, 0, 1
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/babel.config.js", "JavaScript", 0, 6, 0, 0, 0, 0, 1, 7
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/components/categories/CategoriesList.jsx", "JavaScript JSX", 0, 0, 90, 0, 0, 0, 4, 94
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/components/categories/CategoryColorList.jsx", "JavaScript JSX", 0, 0, 65, 0, 0, 0, 9, 74
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/components/categories/CategoryImagePicker.jsx", "JavaScript JSX", 0, 0, 97, 0, 0, 0, 8, 105
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/components/categories/HeaderSortButton.jsx", "JavaScript JSX", 0, 0, 31, 0, 0, 0, 3, 34
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/components/categories/ManageCategory.jsx", "JavaScript JSX", 0, 0, 268, 0, 0, 0, 14, 282
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/components/commitments/CommitmentImagePicker.jsx", "JavaScript JSX", 0, 0, 98, 0, 0, 0, 8, 106
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/components/commitments/CommitmentsList.jsx", "JavaScript JSX", 0, 0, 569, 0, 0, 0, 23, 592
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/components/commitments/DropDownPicker.jsx", "JavaScript JSX", 0, 0, 82, 0, 0, 0, 3, 85
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/components/commitments/EpisodeCounter.jsx", "JavaScript JSX", 0, 0, 84, 0, 0, 0, 6, 90
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/components/commitments/HeaderSearchButton.jsx", "JavaScript JSX", 0, 0, 21, 0, 0, 0, 3, 24
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/components/commitments/ManageCommitment.jsx", "JavaScript JSX", 0, 0, 508, 0, 0, 13, 20, 541
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/components/commitments/SearchContianer.jsx", "JavaScript JSX", 0, 0, 149, 0, 0, 0, 9, 158
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/components/ui/CustomButton.jsx", "JavaScript JSX", 0, 0, 59, 0, 0, 0, 4, 63
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/components/ui/HeaderAddButton.jsx", "JavaScript JSX", 0, 0, 33, 0, 0, 0, 4, 37
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/components/ui/RowTitle.jsx", "JavaScript JSX", 0, 0, 25, 0, 0, 0, 4, 29
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/constants/styles.js", "JavaScript", 0, 32, 0, 0, 0, 0, 5, 37
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/db.js", "JavaScript", 0, 289, 0, 0, 0, 32, 24, 345
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/features/categories/categoriesSlice.js", "JavaScript", 0, 70, 0, 0, 0, 8, 5, 83
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/features/categories/categoriesthunk.js", "JavaScript", 0, 38, 0, 0, 0, 0, 6, 44
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/features/commitments/commitmentsSlice.js", "JavaScript", 0, 68, 0, 0, 0, 7, 5, 80
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/features/commitments/commitmentsThunk.js", "JavaScript", 0, 38, 0, 0, 0, 0, 6, 44
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/models/Category.js", "JavaScript", 0, 9, 0, 0, 0, 0, 2, 11
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/models/Commitment.js", "JavaScript", 0, 26, 0, 0, 0, 0, 2, 28
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/package.json", "JSON", 36, 0, 0, 0, 0, 0, 1, 37
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/screens/AllCommitmentsScreen.jsx", "JavaScript JSX", 0, 0, 68, 0, 0, 0, 8, 76
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/screens/CategoriesScreen.jsx", "JavaScript JSX", 0, 0, 40, 0, 0, 1, 7, 48
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/screens/CategoryScreen.jsx", "JavaScript JSX", 0, 0, 101, 0, 0, 0, 10, 111
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/screens/CommitmentScreen.jsx", "JavaScript JSX", 0, 0, 431, 0, 0, 0, 13, 444
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/screens/CurrentCommitmentsScreen.jsx", "JavaScript JSX", 0, 0, 87, 0, 0, 0, 8, 95
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/screens/FetchCommitmentsOverlay.jsx", "JavaScript JSX", 0, 0, 139, 0, 0, 0, 11, 150
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/screens/ManageScreen.jsx", "JavaScript JSX", 0, 0, 28, 0, 0, 0, 6, 34
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/store.js", "JavaScript", 0, 9, 0, 0, 0, 0, 3, 12
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/util/fetchFromDB.js", "JavaScript", 0, 35, 0, 0, 0, 0, 9, 44
+"/Users/hashem/Desktop/Development/JavaScript/Projects/iWatch/util/format.js", "JavaScript", 0, 9, 0, 0, 0, 0, 1, 10
+"Total", "-", 50, 752, 3073, 1, 1, 84, 264, 4225
