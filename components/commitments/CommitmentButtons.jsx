@@ -62,6 +62,7 @@ const CommitmentButtons = ({
               readOnlyInput={readOnlyInput}
               initialValue={commitment.currentEpisode}
               onValueChange={(value) => {
+                commitment.currentEpisode = value;
                 if (value >= commitment.totalEpisodes) {
                   commitment.status = "finished";
                 }

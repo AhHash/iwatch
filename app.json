@@ -16,7 +16,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.hashem.iWatch"
+      "bundleIdentifier": "com.ahhashem.iWatch"
     },
     "android": {
       "adaptiveIcon": {
@@ -25,7 +25,8 @@
       },
       "permissions": [
         "android.permission.RECORD_AUDIO"
-      ]
+      ],
+      "package": "com.ahhashem.iWatch"
     },
     "plugins": [
       [
@@ -34,6 +35,11 @@
           "photosPermission": "The app accesses your photos to use them in categories and commitments."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "996589d7-82f4-444a-ba55-42a4e8a68829"
+      }
+    }
   }
 }
