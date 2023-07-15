@@ -9,15 +9,18 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 
-const CategoriesList = ({ data, style, fixed }) => {
+import { getImgUri } from "../../util/format";
+import { globalColors } from "../../constants/styles";
+
+const CategoriesList = ({ style, fixed, isEditing, data }) => {
   const { navigate } = useNavigation();
-  const isEditing = useSelector((store) => store.categories.isEditing);
+  const { categories } = useSelector((store) => store.categories);
 
   return (
     <FlatList
       showsVerticalScrollIndicator={false}
-      data={data}
-      style={[{ borderRadius: 5, overflow: "hidden" }, style]}
+      data={data || categories}
+      style={[styles.list, style]}
       bounces={!fixed}
       renderItem={({ item }) => {
         return (
@@ -36,9 +39,7 @@ const CategoriesList = ({ data, style, fixed }) => {
             }}
           >
             <ImageBackground
-              source={
-                typeof item.img == "number" ? item.img : { uri: item.img }
-              }
+              source={getImgUri(item.img)}
               style={styles.categoryImage}
             >
               <LinearGradient
@@ -58,6 +59,10 @@ const CategoriesList = ({ data, style, fixed }) => {
 export default CategoriesList;
 
 const styles = StyleSheet.create({
+  list: {
+    borderRadius: 5,
+    overflow: "hidden",
+  },
   categoryContainer: {
     width: "100%",
     height: 130,
@@ -76,18 +81,18 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     left: 0,
-    color: "white",
+    color: globalColors.textMain,
     marginVertical: 15,
     marginHorizontal: 10,
     fontWeight: "bold",
     fontSize: 24,
   },
   editText: {
-    backgroundColor: "rgba(75, 75, 75, 1)",
+    backgroundColor: globalColors.textBackground,
     textAlign: "center",
     fontSize: 28,
     opacity: 0.3,
     fontWeight: "bold",
-    color: "white",
+    color: globalColors.textMain,
   },
 });

@@ -1,16 +1,14 @@
 import { useDispatch, useSelector } from "react-redux";
 import { getAllCategories } from "../features/categories/categoriesthunk";
-import { useEffect, useLayoutEffect } from "react";
-import CategoriesList from "../components/categories/CategoriesList";
-import { StyleSheet, Text, View } from "react-native";
+import { useEffect, useLayoutEffect, useState } from "react";
+import { StyleSheet, View } from "react-native";
 import { Item } from "react-navigation-header-buttons";
-import { setIsEditing } from "../features/categories/categoriesSlice";
+
+import CategoriesList from "../components/categories/CategoriesList";
 
 const CategoriesScreen = ({ navigation }) => {
   const dispatch = useDispatch();
-  const { categories, error, errorMessage, isEditing } = useSelector(
-    (store) => store.categories
-  );
+  const [isEditing, setIsEditing] = useState(false);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -20,7 +18,7 @@ const CategoriesScreen = ({ navigation }) => {
             title={isEditing ? "Editing" : "Edit"}
             style={{ marginLeft: 20 }}
             onPress={() => {
-              dispatch(setIsEditing(!isEditing));
+              setIsEditing(!isEditing);
             }}
           />
         );
@@ -34,8 +32,7 @@ const CategoriesScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      {/* {error && <Text>{errorMessage}</Text>} */}
-      <CategoriesList data={categories} />
+      <CategoriesList isEditing={isEditing} />
     </View>
   );
 };

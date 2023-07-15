@@ -5,6 +5,7 @@ import {
   Platform,
   StyleSheet,
 } from "react-native";
+import { globalColors } from "../../constants/styles";
 
 const CustomButton = ({
   onPress,
@@ -40,7 +41,7 @@ export default CustomButton;
 const styles = StyleSheet.create({
   container: {
     padding: 10,
-    backgroundColor: "rgba(239, 239, 239, 0.2)",
+    backgroundColor: globalColors.buttonBackground,
     borderRadius: 4,
   },
   text: {

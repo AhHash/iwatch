@@ -7,7 +7,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-const HeaderAddButton = ({ inPlace }) => {
+const HeaderAddButton = ({}) => {
   const { navigate } = useNavigation();
 
   return (

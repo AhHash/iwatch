@@ -1,8 +1,7 @@
 import {
+  ActivityIndicator,
   Keyboard,
-  ScrollView,
   StyleSheet,
-  Text,
   TextInput,
   TouchableWithoutFeedback,
   View,
@@ -12,11 +11,13 @@ import { fetchCommitments, getSeriesDetails } from "../util/fetchFromDB";
 import { useLayoutEffect, useMemo, useState } from "react";
 import Commitment from "../models/Commitment";
 import CommitmentsList from "../components/commitments/CommitmentsList";
-import { placeholderImages } from "../constants/styles";
+import { placeholderImages } from "../constants/data";
+import { globalColors } from "../constants/styles";
 
 const FetchCommitmentsOverlay = ({ navigation: { navigate } }) => {
   const [searchInput, setSearchInput] = useState("");
   const [commitments, setCommitments] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useLayoutEffect(() => {
     setCommitments([]);
@@ -28,6 +29,8 @@ const FetchCommitmentsOverlay = ({ navigation: { navigate } }) => {
       clearTimeout(id);
       if (query.length >= 3) {
         id = setTimeout(async () => {
+          setIsLoading(() => true);
+
           const result = await fetchCommitments(query);
           const initialCommitments = result.results.slice(0, 10);
 
@@ -52,7 +55,6 @@ const FetchCommitmentsOverlay = ({ navigation: { navigate } }) => {
               } else if (result.media_type == "tv") {
                 try {
                   const seriesDetails = await getSeriesDetails(result.id);
-                  console.log(result);
 
                   const commitment = new Commitment(
                     result.name ||
@@ -69,10 +71,15 @@ const FetchCommitmentsOverlay = ({ navigation: { navigate } }) => {
                     "yet to watch",
                     "multi-episode"
                   );
-                  commitment.date = result.release_date.split("-")[0];
+
+                  commitment.date =
+                    result.release_date?.split("-")[0] ||
+                    seriesDetails.first_air_date?.split("-")[0];
+
                   return commitment;
                 } catch (error) {}
               }
+              setIsLoading(() => false);
             })
           );
           const filteredCommitments = resultCommitments.filter(
@@ -90,6 +97,7 @@ const FetchCommitmentsOverlay = ({ navigation: { navigate } }) => {
       <View style={styles.container}>
         <View style={styles.row}>
           <TextInput
+            autoCapitalize="words"
             style={[styles.inputText]}
             value={searchInput}
             onChangeText={(text) => {
@@ -100,18 +108,23 @@ const FetchCommitmentsOverlay = ({ navigation: { navigate } }) => {
           />
         </View>
         <View style={styles.listContainer}>
-          <CommitmentsList
-            data={commitments}
-            itemOnPress={(commitment) => {
-              navigate("Manage", {
-                mode: "add",
-                type: "commitment",
-                data: commitment,
-              });
-            }}
-            reverse
-            hideStatus
-          />
+          {isLoading && !commitments.length ? (
+            <ActivityIndicator style={styles.activityIndicator} size="large" />
+          ) : (
+            <CommitmentsList
+              data={commitments}
+              itemOnPress={(commitment) => {
+                navigate("Manage", {
+                  mode: "add",
+                  type: "commitment",
+                  data: commitment,
+                });
+              }}
+              reverse
+              hideStatus
+              addOnEmptyText="Search and results will appear here!"
+            />
+          )}
         </View>
       </View>
     </TouchableWithoutFeedback>
@@ -127,20 +140,20 @@ const styles = StyleSheet.create({
   },
   row: {
     paddingVertical: 20,
-    borderBottomColor: "rgba(255, 255, 255, 0.2)",
+    borderBottomColor: globalColors.borderColor,
     borderBottomWidth: 4,
   },
   rowTitle: {
-    color: "white",
+    color: globalColors.textMain,
     fontSize: 16,
     fontWeight: "bold",
     marginBottom: 10,
   },
   inputText: {
-    backgroundColor: "#2c2c2c",
-    fontSize: 24,
+    backgroundColor: globalColors.inputBackground,
+    fontSize: 22,
     padding: 12,
-    color: "white",
+    color: globalColors.textMain,
   },
   listContainer: {
     flex: 1,
@@ -148,5 +161,8 @@ const styles = StyleSheet.create({
     marginBottom: "5%",
     borderRadius: 4,
     overflow: "hidden",
+  },
+  activityIndicator: {
+    marginTop: 20,
   },
 });

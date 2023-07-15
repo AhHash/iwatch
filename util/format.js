@@ -7,3 +7,11 @@ export const title = (str) => {
     })
     .join(" ");
 };
+
+export const getImgUri = (img) => {
+  return typeof img == "number" ? img : { uri: img };
+};
+
+export const limitString = (text, limit) => {
+  return text.length >= limit ? text.slice(0, limit) + "..." : text;
+};

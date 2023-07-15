@@ -14,9 +14,12 @@ import {
   MediaTypeOptions,
 } from "expo-image-picker";
 
+import { getImgUri } from "../../util/format";
+import { globalColors } from "../../constants/styles";
+
 const CategoryImagePicker = ({ onPickImage, initialImage }) => {
   const [status, getPermissoins] = useMediaLibraryPermissions();
-  const [inputImage, setInputImage] = useState(null);
+  const [inputImage, setInputImage] = useState();
 
   useLayoutEffect(() => {
     setInputImage(initialImage);
@@ -39,9 +42,9 @@ const CategoryImagePicker = ({ onPickImage, initialImage }) => {
         return false;
       }
     }
-  });
+  }, [status]);
 
-  const getPhoto = async () => {
+  const getPhoto = useCallback(async () => {
     if (!(await chechPermissions())) {
       return;
     }
@@ -56,23 +59,21 @@ const CategoryImagePicker = ({ onPickImage, initialImage }) => {
       setInputImage(result.assets[0].uri);
       onPickImage(result.assets[0].uri);
     }
-  };
+  }, [status]);
 
   return (
-    <View style={styles.container}>
+    <Pressable style={styles.container} onPress={getPhoto}>
       <ImageBackground
-        source={
-          typeof inputImage == "number" ? inputImage : { uri: inputImage }
-        }
+        source={getImgUri(inputImage)}
         style={styles.backgroundImage}
       >
-        <Pressable onPress={getPhoto} style={styles.textContainer}>
+        <View style={styles.textContainer}>
           <Text style={styles.text}>
             {inputImage ? "Tab To Edit" : "Pick Image"}
           </Text>
-        </Pressable>
+        </View>
       </ImageBackground>
-    </View>
+    </Pressable>
   );
 };
 
@@ -82,23 +83,24 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     height: 130,
-    backgroundColor: "#111",
+    backgroundColor: globalColors.pickerContainerBackground,
   },
   backgroundImage: {
     flex: 1,
     justifyContent: "center",
-    backgroundColor: "#ccc",
+    backgroundColor: globalColors.pickerImage,
     borderRadius: 5,
     overflow: "hidden",
   },
   textContainer: {
     alignItems: "center",
-    backgroundColor: "rgba(75, 75, 75, 0.3)",
+    backgroundColor: globalColors.textBackground,
+    opacity: 0.7,
   },
   text: {
     fontSize: 28,
     opacity: 0.3,
     fontWeight: "bold",
-    color: "white",
+    color: globalColors.textMain,
   },
 });

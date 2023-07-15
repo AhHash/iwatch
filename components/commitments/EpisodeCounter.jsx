@@ -3,6 +3,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 
 import CustomButton from "../ui/CustomButton";
 import { useEffect, useState } from "react";
+import { globalColors } from "../../constants/styles";
 
 const EpisodeCounter = ({
   disabled,
@@ -80,9 +81,9 @@ const styles = StyleSheet.create({
   textInput: {
     minWidth: 35,
     maxWidth: 70,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    backgroundColor: globalColors.buttonBackground,
     fontSize: 24,
-    color: "white",
+    color: globalColors.textMain,
     textAlign: "center",
     paddingHorizontal: 4,
   },

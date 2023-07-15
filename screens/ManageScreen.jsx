@@ -21,7 +21,7 @@ const ManageScreen = ({ route, navigation }) => {
       dispatch(setIsEditingCategories(false));
       dispatch(setIsEditingCommitments(false));
     }
-  }, [route, isFocuesed]);
+  }, [isFocuesed]);
 
   if (type == "category") {
     return <ManageCategory id={id} />;

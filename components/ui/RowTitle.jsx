@@ -1,4 +1,5 @@
 import { Text, StyleSheet } from "react-native";
+import { globalColors } from "../../constants/styles";
 
 const RowTitle = ({ errors, error, title, inline }) => {
   return (
@@ -18,11 +19,11 @@ export default RowTitle;
 
 const styles = StyleSheet.create({
   rowTitle: {
-    color: "white",
+    color: globalColors.textMain,
     fontSize: 16,
     fontWeight: "bold",
   },
   warningText: {
-    color: "rgb(231, 105, 105)",
+    color: globalColors.textWarning,
   },
 });

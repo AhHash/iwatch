@@ -12,8 +12,6 @@ const initialState = {
   error: false,
   errorMessage: "",
   message: "",
-  isEditing: false,
-  selectedCategory: {},
 };
 
 export const categoriesSlice = createSlice({

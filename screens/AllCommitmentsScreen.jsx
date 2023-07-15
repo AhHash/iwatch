@@ -1,8 +1,6 @@
 import { useLayoutEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
 
-import { setIsEditing } from "../features/commitments/commitmentsSlice";
 import { Item } from "react-navigation-header-buttons";
 import HeaderAddButton from "../components/ui/HeaderAddButton";
 import HeaderSearchButton from "../components/commitments/HeaderSearchButton";
@@ -10,9 +8,7 @@ import CommitmentsList from "../components/commitments/CommitmentsList";
 import SearchContianer from "../components/commitments/SearchContianer";
 
 const AllCommitmentsScreen = ({ navigation }) => {
-  const dispatch = useDispatch();
-  const { isEditing } = useSelector((store) => store.commitments);
-
+  const [isEditing, setIsEditing] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [searchInputs, setSearchInputs] = useState({});
 
@@ -22,22 +18,16 @@ const AllCommitmentsScreen = ({ navigation }) => {
         return (
           <Item
             title={isEditing ? "Editing" : "Edit"}
-            style={{ marginLeft: 20 }}
+            style={styles.editButton}
             onPress={() => {
-              dispatch(setIsEditing(!isEditing));
+              setIsEditing(!isEditing);
             }}
           />
         );
       },
       headerRight: () => {
         return (
-          <View
-            style={{
-              flexDirection: "row",
-              columnGap: 15,
-              alignItems: "center",
-            }}
-          >
+          <View style={styles.searchButtonContainer}>
             <HeaderSearchButton
               onSelect={() => {
                 setIsSearching((previousValue) => {
@@ -60,9 +50,11 @@ const AllCommitmentsScreen = ({ navigation }) => {
       {isSearching && <SearchContianer onValueChange={setSearchInputs} />}
       <CommitmentsList
         filters={searchInputs}
-        showCategories
         sort={searchInputs.sort}
+        showCategories
         showAddOnEmpty
+        isEditing={isEditing}
+        noBack
       />
     </View>
   );
@@ -72,4 +64,10 @@ export default AllCommitmentsScreen;
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 10 },
+  searchButtonContainer: {
+    flexDirection: "row",
+    columnGap: 15,
+    alignItems: "center",
+  },
+  editButton: { marginLeft: 20 },
 });

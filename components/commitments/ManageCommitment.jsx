@@ -9,7 +9,13 @@ import {
   Keyboard,
 } from "react-native";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
-import { useCallback, useEffect, useLayoutEffect, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
@@ -23,24 +29,21 @@ import {
   updateCommitment,
   deleteCommitment,
 } from "../../features/commitments/commitmentsThunk";
-import {
-  selectCommitment,
-  setIsEditing,
-} from "../../features/commitments/commitmentsSlice";
 import EpisodeCounter from "./EpisodeCounter";
 import { placeholderImages } from "../../constants/data";
 import { Item } from "react-navigation-header-buttons";
+import { globalColors } from "../../constants/styles";
 
 const ManageCommitment = ({ id, data }) => {
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
   const { goBack, setOptions, navigate } = useNavigation();
 
-  const { selectedCommitment, isEditing } = useSelector(
-    (store) => store.commitments
-  );
-
-  const { categories } = useSelector((store) => store.categories);
+  const categories = useSelector((store) => store.categories.categories);
+  const commitments = useSelector((store) => store.commitments.commitments);
+  const selectedCommitment = useMemo(() => {
+    commitments.find((commitment) => commitment.id == id);
+  });
 
   const [inputCommitment, setInputCommitment] = useState({
     ...new Commitment(),
@@ -57,11 +60,8 @@ const ManageCommitment = ({ id, data }) => {
   const [isTextInputsDisabled, setIsTextInputsDisabled] = useState(false);
 
   useLayoutEffect(() => {
-    if (isEditing) {
-      dispatch(selectCommitment(id));
-    }
     setErrors([]);
-  }, [id, isFocused, isEditing]);
+  }, [id, isFocused, selectedCommitment]);
 
   useLayoutEffect(() => {
     setOptions({
@@ -81,12 +81,12 @@ const ManageCommitment = ({ id, data }) => {
   }, []);
 
   useEffect(() => {
-    if (isEditing) {
+    if (selectedCommitment) {
       setInputCommitment({ ...selectedCommitment });
     } else {
       setInputCommitment({ ...new Commitment(), ...data });
     }
-  }, [id, data, isEditing, selectedCommitment]);
+  }, [id, data, selectedCommitment]);
 
   useEffect(() => {
     if (
@@ -113,6 +113,73 @@ const ManageCommitment = ({ id, data }) => {
     });
   }, []);
 
+  const resetError = useCallback((errorName) => {
+    setErrors((previousErrors) =>
+      previousErrors.filter((error) => error != errorName)
+    );
+  }, []);
+
+  const updateCommitmentHandler = useCallback((commitment) => {
+    dispatch(
+      updateCommitment(
+        new Commitment(
+          commitment.name,
+          commitment.imgUri || placeholderImages.commitment,
+          commitment.imgLocal,
+          commitment.totalEpisodes,
+          commitment.currentEpisode,
+          commitment.category,
+          commitment.description,
+          commitment.status,
+          commitment.type,
+          commitment.id
+        )
+      )
+    );
+  }, []);
+
+  const addCommitmentHandler = useCallback((commitment) => {
+    dispatch(
+      addCommitment(
+        new Commitment(
+          commitment.name,
+          commitment.imgUri || placeholderImages.commitment,
+          commitment.imgLocal,
+          commitment.totalEpisodes,
+          commitment.currentEpisode,
+          commitment.category,
+          commitment.description,
+          commitment.status,
+          commitment.type
+        )
+      )
+    );
+  }, []);
+
+  const validateInputs = useCallback((commitment) => {
+    for (const error of ["name", "category", "type", "status"]) {
+      if (!commitment[error]) {
+        setErrors((previousErrors) => {
+          if (!errors.includes(error)) {
+            return [...previousErrors, error];
+          }
+          return previousErrors;
+        });
+      }
+    }
+
+    if (
+      !commitment.name ||
+      !commitment.category ||
+      !commitment.type ||
+      !commitment.status
+    ) {
+      return false;
+    }
+
+    return true;
+  }, []);
+
   return (
     <ScrollView style={styles.container} bounces={false}>
       <KeyboardAvoidingView
@@ -126,9 +193,6 @@ const ManageCommitment = ({ id, data }) => {
             <CommitmentImagePicker
               initialImage={inputCommitment.imgUri}
               onPickImage={(image) => {
-                // setErrors((previousErrors) =>
-                //   previousErrors.filter((error) => error != "image")
-                // );
                 setInputCommitment((previousCommitment) => ({
                   ...previousCommitment,
                   imgUri: image,
@@ -146,9 +210,7 @@ const ManageCommitment = ({ id, data }) => {
                 value={inputCommitment.name}
                 autoCapitalize="words"
                 onChangeText={(text) => {
-                  setErrors((previousErrors) =>
-                    previousErrors.filter((error) => error != "name")
-                  );
+                  resetError("name");
                   setInputCommitment((previousCommitment) => ({
                     ...previousCommitment,
                     name: text,
@@ -185,16 +247,14 @@ const ManageCommitment = ({ id, data }) => {
             style={[
               styles.inputText,
               styles.textArea,
-              inputCommitment.type == "movie" && {
+              inputCommitment.type != "multi-episode" && {
                 height: Dimensions.get("window").height / 5,
               },
             ]}
             multiline={true}
             value={inputCommitment.description}
             onChangeText={(text) => {
-              setErrors((previousErrors) =>
-                previousErrors.filter((error) => error != "description")
-              );
+              resetError("description");
               setInputCommitment((previousCommitment) => ({
                 ...previousCommitment,
                 description: text,
@@ -335,11 +395,7 @@ const ManageCommitment = ({ id, data }) => {
                   disabled={inputCommitment.status != "watching"}
                   upperLimit={inputCommitment.totalEpisodes - 1}
                   onValueChange={(currentEpisode) => {
-                    setErrors((previousErrors) =>
-                      previousErrors.filter(
-                        (error) => error != "currentEpisode"
-                      )
-                    );
+                    resetError("currentEpisode");
                     setInputCommitment((previousCommitment) => {
                       return { ...previousCommitment, currentEpisode };
                     });
@@ -356,99 +412,20 @@ const ManageCommitment = ({ id, data }) => {
               style={styles.button}
               textStyle={styles.buttonText}
               onPress={() => {
-                if (!inputCommitment.name) {
-                  setErrors((previousErrors) => {
-                    if (!errors.includes("name")) {
-                      return [...previousErrors, "name"];
-                    }
-                    return previousErrors;
-                  });
+                if (validateInputs(inputCommitment)) {
+                  if (selectedCommitment) {
+                    updateCommitmentHandler(inputCommitment);
+                  } else {
+                    addCommitmentHandler(inputCommitment);
+                  }
+                  goBack();
                 }
-                if (!inputCommitment.category) {
-                  setErrors((previousErrors) => {
-                    if (!errors.includes("category")) {
-                      return [...previousErrors, "category"];
-                    }
-                    return previousErrors;
-                  });
-                }
-                // if (!inputCommitment.imgUri) {
-                //   setErrors((previousErrors) => {
-                //     if (!errors.includes("image")) {
-                //       return [...previousErrors, "image"];
-                //     }
-                //     return previousErrors;
-                //   });
-                // }
-                if (!inputCommitment.type) {
-                  setErrors((previousErrors) => {
-                    if (!errors.includes("type")) {
-                      return [...previousErrors, "type"];
-                    }
-                    return previousErrors;
-                  });
-                }
-                if (!inputCommitment.status) {
-                  setErrors((previousErrors) => {
-                    if (!errors.includes("status")) {
-                      return [...previousErrors, "status"];
-                    }
-                    return previousErrors;
-                  });
-                }
-
-                if (
-                  !inputCommitment.name ||
-                  !inputCommitment.category ||
-                  // !inputCommitment.imgUri ||
-                  !inputCommitment.type ||
-                  !inputCommitment.status
-                ) {
-                  return;
-                }
-
-                if (isEditing) {
-                  dispatch(
-                    updateCommitment(
-                      new Commitment(
-                        inputCommitment.name,
-                        inputCommitment.imgUri || placeholderImages.commitment,
-                        inputCommitment.imgLocal,
-                        inputCommitment.totalEpisodes,
-                        inputCommitment.currentEpisode,
-                        inputCommitment.category,
-                        inputCommitment.description,
-                        inputCommitment.status,
-                        inputCommitment.type,
-                        inputCommitment.id
-                      )
-                    )
-                  );
-                } else {
-                  dispatch(
-                    addCommitment(
-                      new Commitment(
-                        inputCommitment.name,
-                        inputCommitment.imgUri || placeholderImages.commitment,
-                        inputCommitment.imgLocal,
-                        inputCommitment.totalEpisodes,
-                        inputCommitment.currentEpisode,
-                        inputCommitment.category,
-                        inputCommitment.description,
-                        inputCommitment.status,
-                        inputCommitment.type
-                      )
-                    )
-                  );
-                }
-                dispatch(setIsEditing(false));
-                goBack();
               }}
             >
-              {isEditing ? "Update" : "Add"} Commitment
+              {selectedCommitment ? "Update" : "Add"} Commitment
             </CustomButton>
 
-            {isEditing && (
+            {selectedCommitment && (
               <CustomButton
                 warning
                 style={styles.button}
@@ -467,7 +444,6 @@ const ManageCommitment = ({ id, data }) => {
                         style: "destructive",
                         onPress: () => {
                           dispatch(deleteCommitment(id));
-                          dispatch(setIsEditing(false));
                           goBack();
                         },
                       },
@@ -495,7 +471,7 @@ const styles = StyleSheet.create({
   },
   row: {
     paddingVertical: 15,
-    borderBottomColor: "rgba(255, 255, 255, 0.2)",
+    borderBottomColor: globalColors.borderColor,
     borderBottomWidth: 4,
     columnGap: 20,
   },
@@ -505,10 +481,10 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   inputText: {
-    backgroundColor: "#2c2c2c",
+    backgroundColor: globalColors.inputBackground,
     fontSize: 24,
     padding: 12,
-    color: "white",
+    color: globalColors.textMain,
   },
   textArea: {
     width: "100%",

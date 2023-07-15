@@ -1,11 +1,5 @@
-import {
-  HiddenItem,
-  Item,
-  OverflowMenu,
-  overflowMenuPressHandlerDropdownMenu,
-} from "react-navigation-header-buttons";
+import { Item } from "react-navigation-header-buttons";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Text } from "react-native";
 
 const HeaderSortButton = ({ onSelect }) => {
   return (
@@ -13,7 +7,13 @@ const HeaderSortButton = ({ onSelect }) => {
       iconName="menu"
       IconComponent={({ color }) => {
         return (
-          <Ionicons name="search" color={color} size={20} onPress={onSelect} />
+          <Ionicons
+            name="search"
+            color={color}
+            size={20}
+            onPress={onSelect}
+            style={{}}
+          />
         );
       }}
     />

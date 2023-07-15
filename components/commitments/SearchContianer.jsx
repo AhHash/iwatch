@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import DropDownPicker from "./DropDownPicker";
 import { useSelector } from "react-redux";
+import { globalColors } from "../../constants/styles";
 
 const SearchContianer = ({ onValueChange }) => {
   const categories = useSelector((store) => store.categories.categories);
@@ -115,11 +116,11 @@ const styles = StyleSheet.create({
     height: 50,
     flexDirection: "row",
     columnGap: 4,
-    borderColor: "white",
+    borderColor: globalColors.textMain,
   },
   textInput: {
-    backgroundColor: "#2c2c2c",
-    color: "white",
+    backgroundColor: globalColors.inputBackground,
+    color: globalColors.textMain,
     fontSize: 20,
     height: "100%",
     paddingHorizontal: 5,
@@ -143,7 +144,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   text: {
-    color: "white",
+    color: globalColors.textMain,
     fontSize: 16,
     marginBottom: 2,
     textAlign: "center",

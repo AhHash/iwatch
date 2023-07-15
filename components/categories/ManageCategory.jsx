@@ -9,7 +9,13 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
-import { useEffect, useLayoutEffect, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import Category from "../../models/Category";
@@ -21,37 +27,83 @@ import {
   deleteCategory,
   updateCategory,
 } from "../../features/categories/categoriesthunk";
-import {
-  selectCategory,
-  setIsEditing,
-} from "../../features/categories/categoriesSlice";
+import { globalColors } from "../../constants/styles";
 
 const ManageCategory = ({ id }) => {
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
   const { goBack } = useNavigation();
 
-  const { selectedCategory, isEditing } = useSelector(
-    (store) => store.categories
-  );
+  const categories = useSelector((store) => store.categories.categories);
+  const selectedCategory = useMemo(() => {
+    return categories.find((category) => category.id == id);
+  }, [id, isFocused]);
 
   const [inputCategory, setInputCategory] = useState({ ...new Category() });
   const [errors, setErrors] = useState([]);
 
   useLayoutEffect(() => {
-    if (isEditing) {
-      dispatch(selectCategory(id));
-    }
     setErrors([]);
-  }, [id, isFocused, isEditing]);
+  }, [id, isFocused]);
 
   useEffect(() => {
-    if (isEditing) {
+    if (selectedCategory) {
       setInputCategory({ ...selectedCategory });
     } else {
       setInputCategory({ ...new Category() });
     }
-  }, [id, isEditing, selectedCategory]);
+  }, [id, selectedCategory, isFocused]);
+
+  const validateInputs = useCallback((commitment) => {
+    for (const error of ["name", "img", "colorCode"]) {
+      if (!commitment[error]) {
+        setErrors((previousErrors) => {
+          if (!errors.includes(error)) {
+            return [...previousErrors, error];
+          }
+          return previousErrors;
+        });
+      }
+    }
+
+    if (!commitment.name || !commitment.colorCode || !commitment.img) {
+      return false;
+    }
+
+    return true;
+  }, []);
+
+  const submitInputs = useCallback(() => {
+    if (selectedCategory) {
+      dispatch(
+        updateCategory(
+          new Category(
+            inputCategory.name,
+            inputCategory.colorCode,
+            inputCategory.img,
+            id
+          )
+        )
+      );
+    } else {
+      dispatch(
+        addCategory(
+          new Category(
+            inputCategory.name,
+            inputCategory.colorCode,
+            inputCategory.img
+          )
+        )
+      );
+    }
+    goBack();
+  }, [inputCategory, selectedCategory]);
+
+  const resetError = useCallback((errorName) => {
+    setErrors((previousErrors) =>
+      previousErrors.filter((error) => error != errorName)
+    );
+  }, []);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -69,9 +121,7 @@ const ManageCategory = ({ id }) => {
             style={styles.inputText}
             value={inputCategory.name}
             onChangeText={(text) => {
-              setErrors((previousErrors) =>
-                previousErrors.filter((error) => error != "name")
-              );
+              resetError("name");
               setInputCategory((previousCategory) => ({
                 ...previousCategory,
                 name: text,
@@ -83,7 +133,7 @@ const ManageCategory = ({ id }) => {
           <Text
             style={[
               styles.rowTitle,
-              errors.includes("color") && styles.warningText,
+              errors.includes("colorCode") && styles.warningText,
             ]}
           >
             Pick a color for your cateogry
@@ -93,9 +143,7 @@ const ManageCategory = ({ id }) => {
             padding={10}
             initialColor={inputCategory.colorCode}
             onPickColor={(color) => {
-              setErrors((previousErrors) =>
-                previousErrors.filter((error) => error != "color")
-              );
+              resetError("colorCode");
               setInputCategory((previousCategory) => ({
                 ...previousCategory,
                 colorCode: color,
@@ -107,7 +155,7 @@ const ManageCategory = ({ id }) => {
           <Text
             style={[
               styles.rowTitle,
-              errors.includes("image") && styles.warningText,
+              errors.includes("img") && styles.warningText,
             ]}
           >
             Category Image
@@ -115,9 +163,7 @@ const ManageCategory = ({ id }) => {
           <CategoryImagePicker
             initialImage={inputCategory.img}
             onPickImage={(image) => {
-              setErrors((previousErrors) =>
-                previousErrors.filter((error) => error != "image")
-              );
+              resetError("img");
               setInputCategory((previousCategory) => ({
                 ...previousCategory,
                 img: image,
@@ -131,69 +177,15 @@ const ManageCategory = ({ id }) => {
               style={styles.button}
               textStyle={styles.buttonText}
               onPress={() => {
-                if (!inputCategory.name) {
-                  setErrors((previousErrors) => {
-                    if (!errors.includes("name")) {
-                      return [...previousErrors, "name"];
-                    }
-                    return previousErrors;
-                  });
+                if (validateInputs(inputCategory)) {
+                  submitInputs();
                 }
-                if (!inputCategory.colorCode) {
-                  setErrors((previousErrors) => {
-                    if (!errors.includes("image")) {
-                      return [...previousErrors, "image"];
-                    }
-                    return previousErrors;
-                  });
-                }
-                if (!inputCategory.img) {
-                  setErrors((previousErrors) => {
-                    if (!errors.includes("color")) {
-                      return [...previousErrors, "color"];
-                    }
-                    return previousErrors;
-                  });
-                }
-
-                if (
-                  !inputCategory.name ||
-                  !inputCategory.colorCode ||
-                  !inputCategory.img
-                ) {
-                  return;
-                }
-
-                if (isEditing) {
-                  dispatch(
-                    updateCategory(
-                      new Category(
-                        inputCategory.name,
-                        inputCategory.colorCode,
-                        inputCategory.img,
-                        id
-                      )
-                    )
-                  );
-                } else {
-                  dispatch(
-                    addCategory(
-                      new Category(
-                        inputCategory.name,
-                        inputCategory.colorCode,
-                        inputCategory.img
-                      )
-                    )
-                  );
-                }
-                dispatch(setIsEditing(false));
-                goBack();
               }}
             >
-              {isEditing ? "Update" : "Add"} Category
+              {selectedCategory ? "Update" : "Add"} Category
             </CustomButton>
 
-            {isEditing && (
+            {selectedCategory && (
               <CustomButton
                 warning
                 style={styles.button}
@@ -201,7 +193,7 @@ const ManageCategory = ({ id }) => {
                 onPress={() => {
                   Alert.alert(
                     "Confirm Deletion",
-                    `Are you sure you want to delete the ${selectedCategory.name}?`,
+                    `Are you sure you want to delete the ${selectedCategory.name} category?`,
                     [
                       {
                         text: "Cancel",
@@ -212,7 +204,6 @@ const ManageCategory = ({ id }) => {
                         style: "destructive",
                         onPress: () => {
                           dispatch(deleteCategory(id));
-                          dispatch(setIsEditing(false));
                           goBack();
                         },
                       },
@@ -240,23 +231,23 @@ const styles = StyleSheet.create({
   },
   row: {
     paddingVertical: 25,
-    borderBottomColor: "rgba(255, 255, 255, 0.2)",
+    borderBottomColor: globalColors.borderColor,
     borderBottomWidth: 4,
   },
   rowTitle: {
-    color: "white",
+    color: globalColors.textMain,
     fontSize: 16,
     fontWeight: "bold",
     marginBottom: 10,
   },
   warningText: {
-    color: "rgb(231, 105, 105)",
+    color: globalColors.textWarning,
   },
   inputText: {
-    backgroundColor: "#2c2c2c",
+    backgroundColor: globalColors.inputBackground,
     fontSize: 24,
     padding: 12,
-    color: "white",
+    color: globalColors.textMain,
   },
   buttonsContainer: {
     flexDirection: "row",

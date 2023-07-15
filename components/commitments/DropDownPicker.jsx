@@ -1,6 +1,7 @@
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { title } from "../../util/format";
+import { globalColors } from "../../constants/styles";
 
 DropDownPicker.setTheme("DARK");
 DropDownPicker.setListMode("SCROLLVIEW");
@@ -21,21 +22,10 @@ const DropDownPickerComponent = ({
     <View style={style}>
       <DropDownPicker
         hideSelectedItemIcon={hideIcons}
-        style={{
-          backgroundColor: "rgba(255, 255, 255, 0.2)",
-          height: style?.slice(-1)[0]?.height,
-        }}
-        textStyle={{
-          fontSize: 15,
-          fontWeight: "bold",
-          color: "white",
-        }}
-        listItemContainerStyle={{
-          backgroundColor: "rgba(255, 255, 255, 0.2)",
-        }}
-        listItemLabelStyle={{
-          color: "white",
-        }}
+        style={[styles.picker, { height: style?.slice(-1)[0]?.height }]}
+        textStyle={styles.text}
+        listItemContainerStyle={styles.itemContainer}
+        listItemLabelStyle={styles.itemLabel}
         placeholder={title(`select ${placeholder || name}`)}
         open={open}
         value={pickerValues[name]}
@@ -82,3 +72,18 @@ const DropDownPickerComponent = ({
   );
 };
 export default DropDownPickerComponent;
+
+const styles = StyleSheet.create({
+  picker: { backgroundColor: globalColors.inputBackground },
+  text: {
+    fontSize: 15,
+    fontWeight: "bold",
+    color: globalColors.textMain,
+  },
+  itemContainer: {
+    backgroundColor: globalColors.inputBackground,
+  },
+  itemLabel: {
+    color: globalColors.textMain,
+  },
+});

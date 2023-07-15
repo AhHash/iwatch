@@ -4,6 +4,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Provider } from "react-redux";
 import { HeaderButtonsProvider, Item } from "react-navigation-header-buttons";
+import { preventAutoHideAsync, hideAsync } from "expo-splash-screen";
 
 import CategoriesScreen from "./screens/CategoriesScreen";
 import AllCommitmentsScreen from "./screens/AllCommitmentsScreen";
@@ -12,7 +13,7 @@ import CommitmentScreen from "./screens/CommitmentScreen";
 import ManageScreen from "./screens/ManageScreen";
 import { useDispatch } from "react-redux";
 import { store } from "./store";
-import { getAll, init, initializeBaseCategories, reset } from "./db";
+import { init, initializeBaseCategories, reset } from "./db";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useLayoutEffect } from "react";
 import { getAllCategories } from "./features/categories/categoriesthunk";
@@ -21,6 +22,8 @@ import HeaderAddButton from "./components/ui/HeaderAddButton";
 import CategoryScreen from "./screens/CategoryScreen";
 import FetchCommitmentsOverlay from "./screens/FetchCommitmentsOverlay";
 import NotificationHandler from "./components/NotificationHandler";
+
+preventAutoHideAsync();
 
 const initializeDatabase = async () => {
   await init();
@@ -84,6 +87,7 @@ const Root = () => {
     initializeDatabase().then(() => {
       dispatch(getAllCategories());
       dispatch(getAllCommitments());
+      hideAsync();
     });
   }, []);
 

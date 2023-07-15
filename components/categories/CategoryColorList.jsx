@@ -1,10 +1,10 @@
 import { View, StyleSheet, Pressable } from "react-native";
-import { constantColors } from "../../constants/styles";
+import { constantColors, globalColors } from "../../constants/styles";
 import { Dimensions } from "react-native";
 import { useLayoutEffect, useState } from "react";
 
 const CategoryColorList = ({ onPickColor, style, padding, initialColor }) => {
-  const [selectedColor, setSelectedColor] = useState(null);
+  const [selectedColor, setSelectedColor] = useState();
 
   useLayoutEffect(() => {
     setSelectedColor(
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
   },
 
   selectedColor: {
-    borderColor: "blue",
+    borderColor: globalColors.categoryColorContainerBorder,
     borderWidth: 3.5,
   },
 });

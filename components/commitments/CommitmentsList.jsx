@@ -5,22 +5,17 @@ import {
   Pressable,
   View,
   ImageBackground,
-  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { LinearGradient } from "expo-linear-gradient";
-import Ionicons from "@expo/vector-icons/Ionicons";
 
 import CustomButton from "../ui/CustomButton";
-import {
-  deleteCommitment,
-  updateCommitment,
-} from "../../features/commitments/commitmentsThunk";
-import EpisodeCounter from "./EpisodeCounter";
-import Commitment from "../../models/Commitment";
 import { useCallback, useMemo } from "react";
-import { title } from "../../util/format";
+import { getImgUri } from "../../util/format";
+import CommitmentButtons from "./CommitmentButtons";
+import CommitmentDeleteButton from "./CommitmentDeleteButton";
+import { globalColors } from "../../constants/styles";
 
 const CommitmentsList = ({
   data,
@@ -42,12 +37,12 @@ const CommitmentsList = ({
   itemOnPress,
   reverse,
   hideStatus,
+  noBack,
+  isEditing,
 }) => {
   const { navigate } = useNavigation();
 
-  const { isEditing } = useSelector((store) => store.commitments);
   const categories = useSelector((store) => store.categories.categories);
-  const dispatch = useDispatch();
 
   let baseCommitments = data
     ? [...data]
@@ -141,26 +136,13 @@ const CommitmentsList = ({
   return (
     <FlatList
       bounces={!fixed}
-      style={[{ zIndex: -3, borderRadius: 5, overflow: "hidden" }, style]}
+      style={[styles.list, style]}
       showsVerticalScrollIndicator={false}
       data={visibleCommitments}
       renderItem={({ item }) => {
         const category = categories.find(
           (category) => category.id == item.category
         );
-
-        const showDeleteButton = showButtons;
-        const showEpisodesButtons =
-          item.type != "movie" && item.status == "watching";
-        const showWatchButtons =
-          item.type != "movie" && item.status == "yet to watch";
-        const showRewatchButton =
-          item.type != "movie" && item.status == "finished";
-        const showMarkAsUndoneButton =
-          item.type == "movie" && item.status == "finished";
-        const showMarkAsDoneButton =
-          item.type == "movie" &&
-          (item.status == "watching" || item.status == "yet to watch");
 
         return (
           <View
@@ -191,11 +173,7 @@ const CommitmentsList = ({
             >
               <ImageBackground
                 style={styles.commitmentImage}
-                source={
-                  typeof item.imgUri == "number"
-                    ? item.imgUri
-                    : { uri: item.imgUri }
-                }
+                source={getImgUri(item.imgUri)}
               >
                 <LinearGradient
                   colors={["transparent", "rgba(0, 0, 0, 0.2)"]}
@@ -249,200 +227,17 @@ const CommitmentsList = ({
             </Pressable>
             {showButtons && (
               <View style={styles.commitmentButtonsContainer}>
-                {showEpisodesButtons && (
-                  <View style={styles.commitmentEpisodeButtonsContainer}>
-                    <Text style={styles.episodeText}>Current Episode</Text>
-                    <View style={styles.episodeCounter}>
-                      <EpisodeCounter
-                        readOnlyInput={readOnlyInput}
-                        initialValue={item.currentEpisode}
-                        onValueChange={(value) => {
-                          if (value >= item.totalEpisodes) {
-                            item.status = "finished";
-                          }
-                          dispatch(
-                            updateCommitment(
-                              new Commitment(
-                                item.name,
-                                item.imgUri,
-                                item.imgLocal,
-                                item.totalEpisodes,
-                                item.currentEpisode,
-                                item.category,
-                                item.description,
-                                item.status,
-                                item.type,
-                                item.id
-                              )
-                            )
-                          );
-                        }}
-                        upperLimit={item.totalEpisodes}
-                      />
-                      <Text
-                        style={styles.totalEpisodesCount}
-                      >{`/ ${item.totalEpisodes}`}</Text>
-                    </View>
-                  </View>
-                )}
-
-                {showRewatchButton && (
-                  <View style={styles.buttonContainer}>
-                    <CustomButton
-                      style={styles.button}
-                      textStyle={styles.buttonText}
-                      onPress={() => {
-                        item.currentEpisode = 0;
-                        item.status = "watching";
-                        dispatch(
-                          updateCommitment(
-                            new Commitment(
-                              item.name,
-                              item.imgUri,
-                              item.imgLocal,
-                              item.totalEpisodes,
-                              item.currentEpisode,
-                              item.category,
-                              item.description,
-                              item.status,
-                              item.type,
-                              item.id
-                            )
-                          )
-                        );
-                      }}
-                    >
-                      <Text>Rewatch</Text>
-                    </CustomButton>
-                  </View>
-                )}
-
-                {showWatchButtons && (
-                  <View style={styles.buttonContainer}>
-                    <CustomButton
-                      style={styles.button}
-                      textStyle={styles.buttonText}
-                      onPress={() => {
-                        item.currentEpisode = 0;
-                        item.status = "watching";
-                        dispatch(
-                          updateCommitment(
-                            new Commitment(
-                              item.name,
-                              item.imgUri,
-                              item.imgLocal,
-                              item.totalEpisodes,
-                              item.currentEpisode,
-                              item.category,
-                              item.description,
-                              item.status,
-                              item.type,
-                              item.id
-                            )
-                          )
-                        );
-                      }}
-                    >
-                      <Text>Watch</Text>
-                    </CustomButton>
-                  </View>
-                )}
-
-                {showMarkAsDoneButton && (
-                  <View style={styles.buttonContainer}>
-                    <CustomButton
-                      style={styles.button}
-                      textStyle={styles.buttonText}
-                      onPress={() => {
-                        item.currentEpisode = item.totalEpisodes;
-                        item.status = "finished";
-                        dispatch(
-                          updateCommitment(
-                            new Commitment(
-                              item.name,
-                              item.imgUri,
-                              item.imgLocal,
-                              item.totalEpisodes,
-                              item.currentEpisode,
-                              item.category,
-                              item.description,
-                              item.status,
-                              item.type,
-                              item.id
-                            )
-                          )
-                        );
-                      }}
-                    >
-                      <Text>Mark as Done</Text>
-                    </CustomButton>
-                  </View>
-                )}
-
-                {showMarkAsUndoneButton && (
-                  <View style={styles.buttonContainer}>
-                    <CustomButton
-                      style={styles.button}
-                      textStyle={styles.buttonText}
-                      onPress={() => {
-                        item.currentEpisode = 0;
-                        item.status = "yet to watch";
-                        dispatch(
-                          updateCommitment(
-                            new Commitment(
-                              item.name,
-                              item.imgUri,
-                              item.imgLocal,
-                              item.totalEpisodes,
-                              item.currentEpisode,
-                              item.category,
-                              item.description,
-                              item.status,
-                              item.type,
-                              item.id
-                            )
-                          )
-                        );
-                      }}
-                    >
-                      <Text>Unwatch</Text>
-                    </CustomButton>
-                  </View>
-                )}
-
-                {showDeleteButton && (
-                  <View style={styles.deleteButtonContainer}>
-                    <CustomButton
-                      style={styles.deleteButton}
-                      textStyle={styles.buttonText}
-                      warning
-                      onPress={() => {
-                        Alert.alert(
-                          "Confirm Deletion",
-                          `Are you sure you want to delete the commitment: ${title(
-                            item.name
-                          )}?`,
-                          [
-                            {
-                              text: "Cancel",
-                              style: "cancel",
-                            },
-                            {
-                              text: "Delete",
-                              style: "destructive",
-                              onPress: () => {
-                                dispatch(deleteCommitment(item.id));
-                              },
-                            },
-                          ],
-                          { userInterfaceStyle: "dark" }
-                        );
-                      }}
-                    >
-                      <Ionicons name="trash" size={24} />
-                    </CustomButton>
-                  </View>
-                )}
+                <CommitmentButtons
+                  commitment={item}
+                  limitEpisodeContainer
+                  readOnlyInput={readOnlyInput}
+                />
+                <CommitmentDeleteButton
+                  commitment={item}
+                  icon
+                  limited
+                  noBack={noBack}
+                />
               </View>
             )}
           </View>
@@ -454,6 +249,11 @@ const CommitmentsList = ({
 export default CommitmentsList;
 
 const styles = StyleSheet.create({
+  list: {
+    zIndex: -3,
+    borderRadius: 5,
+    overflow: "hidden",
+  },
   commitmentContainer: {
     width: "100%",
     position: "relative",
@@ -461,7 +261,7 @@ const styles = StyleSheet.create({
     height: 150,
     overflow: "hidden",
     marginVertical: 5,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    backgroundColor: globalColors.commitmentBackground,
   },
   commitmentData: {
     flexDirection: "row",
@@ -480,20 +280,24 @@ const styles = StyleSheet.create({
     margin: 10,
     justifyContent: "space-between",
   },
-  nameText: { color: "white", fontSize: 18, textTransform: "capitalize" },
+  nameText: {
+    color: globalColors.textMain,
+    fontSize: 18,
+    textTransform: "capitalize",
+  },
   yearText: {
     color: "rgb(100, 100, 100)",
   },
   text: {
-    color: "white",
+    color: globalColors.textMain,
   },
   textLight: {
-    color: "rgb(100, 100, 100)",
+    color: globalColors.textAccent,
     textTransform: "capitalize",
   },
-  ["yet to watch"]: { color: "rgb(200, 20, 20)" },
-  ["watching"]: { color: "rgb(200, 200, 20)" },
-  ["finished"]: { color: "rgb(20, 200, 20)" },
+  ["yet to watch"]: { color: globalColors.yetToWatch },
+  ["watching"]: { color: globalColors.watching },
+  ["finished"]: { color: globalColors.finished },
   categoryView: {
     position: "absolute",
     top: 0,
@@ -505,24 +309,24 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   categoryOverlay: {
-    backgroundColor: "rgba(20, 20, 20, 0.25)",
+    backgroundColor: globalColors.overlay,
     alignSelf: "stretch",
     height: "100%",
     justifyContent: "center",
   },
   categoryText: {
     fontSize: 25,
-    color: "white",
+    color: globalColors.textMain,
     textAlign: "center",
     fontWeight: "bold",
   },
   editTextContainer: {
     flex: 1,
-    backgroundColor: "rgba(30, 30, 30, 0.5)",
+    backgroundColor: globalColors.overlay,
     justifyContent: "center",
   },
   editText: {
-    color: "white",
+    color: globalColors.textMain,
     textAlign: "center",
     fontSize: 20,
     opacity: 0.7,
@@ -534,58 +338,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     padding: 5,
     marginTop: 5,
-    borderTopColor: "rgba(255, 255, 255, 0.2)",
+    borderTopColor: globalColors.borderColor,
     borderTopWidth: 2,
     alignItems: "center",
   },
-  commitmentEpisodeButtonsContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    columnGap: 10,
-    alignItems: "center",
-    flex: 4,
-    marginHorizontal: 10,
-  },
-  episodeText: {
-    flex: 2,
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
-    alignSelf: "center",
-  },
-  episodeCounter: {
-    flex: 5,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-evenly",
-  },
-  totalEpisodesCount: {
-    color: "white",
-    fontSize: 24,
-  },
-  deleteButtonContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    borderLeftColor: "rgba(255, 255, 255, 0.2)",
-    borderLeftWidth: 2,
-  },
-  deleteButton: { padding: 8 },
-  buttonContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  button: {
-    padding: 8,
-    minWidth: "80%",
-  },
-  buttonText: {
-    textAlign: "center",
-    textTransform: "capitalize",
-  },
   noCommitmentsText: {
-    color: "rgb(126, 126, 126)",
+    color: globalColors.textAccent,
     marginTop: 20,
     fontSize: 18,
     textAlign: "center",
