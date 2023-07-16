@@ -39,15 +39,14 @@ const CommitmentsList = ({
   hideStatus,
   noBack,
   isEditing,
-  updater,
 }) => {
   const { navigate } = useNavigation();
 
   const categories = useSelector((store) => store.categories.categories);
 
-  let baseCommitments = [
-    ...useSelector((store) => store.commitments.commitments),
-  ];
+  let baseCommitments = data
+    ? [...data]
+    : [...useSelector((store) => store.commitments.commitments)];
 
   if (sortCategory && sortCategory != "all") {
     baseCommitments = baseCommitments.filter(
