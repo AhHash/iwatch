@@ -19,6 +19,10 @@ const EpisodeCounter = ({
   const [value, setValue] = useState(initialValue || 0);
 
   useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
+
+  useEffect(() => {
     onValueChange(value);
   }, [value]);
 

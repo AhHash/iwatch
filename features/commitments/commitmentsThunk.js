@@ -4,7 +4,7 @@ import { getAll, addOne, deleteOne, getOne, updateOne } from "../../db";
 export const getAllCommitments = createAsyncThunk(
   "commitments/getAllCommitments",
   async () => {
-    return await getAll("commitments");
+    return [...(await getAll("commitments"))];
   }
 );
 

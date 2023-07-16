@@ -1,14 +1,7 @@
 import { useLayoutEffect, useMemo } from "react";
-import { Alert, Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 
-import EpisodeCounter from "../components/commitments/EpisodeCounter";
-import CustomButton from "../components/ui/CustomButton";
-import {
-  deleteCommitment,
-  updateCommitment,
-} from "../features/commitments/commitmentsThunk";
-import Commitment from "../models/Commitment";
 import { Item } from "react-navigation-header-buttons";
 import { setIsEditing } from "../features/commitments/commitmentsSlice";
 import CommitmentButtons from "../components/commitments/CommitmentButtons";
@@ -24,18 +17,19 @@ const CommitmentsScreen = ({
   navigation: { setOptions, navigate },
 }) => {
   const isFocused = useIsFocused();
-  const commitments = useSelector((store) => store.commitments.commitments);
   const categories = useSelector((store) => store.categories.categories);
   const dispatch = useDispatch();
 
+  const commitments = useSelector((store) => store.commitments.commitments);
   const selectedCommitment = useMemo(() => {
     return commitments.find((commitment) => commitment.id == id);
-  }, [id, isFocused]);
+  }, [isFocused, commitments]);
+
   const currentCategory = useMemo(() => {
     return categories.find(
       (category) => category.id == selectedCommitment.category
     );
-  }, [selectedCommitment]);
+  }, [categories, selectedCommitment]);
 
   useLayoutEffect(() => {
     setOptions({
@@ -197,7 +191,7 @@ const styles = StyleSheet.create({
   commitmentButtonsContainer: {
     flex: 1,
     justifyContent: "center",
-    rowGap: "10%",
+    rowGap: 10,
     borderTopColor: globalColors.borderColor,
     borderTopWidth: 5,
     marginBottom: 10,

@@ -1,24 +1,13 @@
 import { StyleSheet, Text, View, useWindowDimensions } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 import CommitmentsList from "../components/commitments/CommitmentsList";
-import { useIsFocused } from "@react-navigation/native";
-import { useEffect } from "react";
-import { setIsEditing as setIsEditingCommitments } from "../features/commitments/commitmentsSlice";
-import { setIsEditing as setIsEditingCategories } from "../features/categories/categoriesSlice";
 import { globalColors } from "../constants/styles";
 
 const CurrentCommitmentsScreen = () => {
   const { height } = useWindowDimensions();
-  const isFocused = useIsFocused();
 
-  const dispatch = useDispatch();
   const commitments = useSelector((store) => store.commitments.commitments);
-
-  useEffect(() => {
-    dispatch(setIsEditingCommitments());
-    dispatch(setIsEditingCategories());
-  }, [isFocused]);
 
   return (
     <View style={styles.container} bounces={false}>
@@ -33,7 +22,6 @@ const CurrentCommitmentsScreen = () => {
           showButtons={height >= 800}
           showCategories
           readOnlyInput
-          data={commitments}
           showAddOnEmpty={commitments.length == 0}
           addOnEmptyText={
             commitments.length != 0 &&
@@ -55,7 +43,6 @@ const CurrentCommitmentsScreen = () => {
             showButtons={height >= 700}
             showCategories
             readOnlyInput
-            data={commitments}
             noBack
           />
         </View>

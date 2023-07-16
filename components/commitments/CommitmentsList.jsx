@@ -39,14 +39,15 @@ const CommitmentsList = ({
   hideStatus,
   noBack,
   isEditing,
+  updater,
 }) => {
   const { navigate } = useNavigation();
 
   const categories = useSelector((store) => store.categories.categories);
 
-  let baseCommitments = data
-    ? [...data]
-    : [...useSelector((store) => store.commitments.commitments)];
+  let baseCommitments = [
+    ...useSelector((store) => store.commitments.commitments),
+  ];
 
   if (sortCategory && sortCategory != "all") {
     baseCommitments = baseCommitments.filter(
@@ -139,7 +140,9 @@ const CommitmentsList = ({
       style={[styles.list, style]}
       showsVerticalScrollIndicator={false}
       data={visibleCommitments}
-      renderItem={({ item }) => {
+      renderItem={({ item: itemData }) => {
+        const item = { ...itemData };
+
         const category = categories.find(
           (category) => category.id == item.category
         );

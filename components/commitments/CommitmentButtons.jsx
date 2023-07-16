@@ -9,11 +9,13 @@ import CustomButton from "../ui/CustomButton";
 import { globalColors } from "../../constants/styles";
 
 const CommitmentButtons = ({
-  commitment,
+  commitment: commitmentData,
   limitEpisodeContainer,
   readOnlyInput,
 }) => {
   const dispatch = useDispatch();
+
+  const commitment = { ...commitmentData };
 
   const showEpisodesButtons =
     commitment.type != "movie" && commitment.status == "watching";
@@ -27,24 +29,27 @@ const CommitmentButtons = ({
     commitment.type == "movie" &&
     (commitment.status == "watching" || commitment.status == "yet to watch");
 
-  const updateCommitmentHandler = useCallback((commitment) => {
-    dispatch(
-      updateCommitment(
-        new Commitment(
-          commitment.name,
-          commitment.imgUri,
-          commitment.imgLocal,
-          commitment.totalEpisodes,
-          commitment.currentEpisode,
-          commitment.category,
-          commitment.description,
-          commitment.status,
-          commitment.type,
-          commitment.id
+  const updateCommitmentHandler = useCallback(
+    (updatedCommitment) => {
+      dispatch(
+        updateCommitment(
+          new Commitment(
+            updatedCommitment.name,
+            updatedCommitment.imgUri,
+            updatedCommitment.imgLocal,
+            updatedCommitment.totalEpisodes,
+            updatedCommitment.currentEpisode,
+            updatedCommitment.category,
+            updatedCommitment.description,
+            updatedCommitment.status,
+            updatedCommitment.type,
+            updatedCommitment.id
+          )
         )
-      )
-    );
-  }, []);
+      );
+    },
+    [dispatch, updateCommitment]
+  );
 
   return (
     <>

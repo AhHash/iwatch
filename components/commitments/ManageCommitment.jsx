@@ -37,13 +37,13 @@ import { globalColors } from "../../constants/styles";
 const ManageCommitment = ({ id, data }) => {
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
-  const { goBack, setOptions, navigate } = useNavigation();
+  const { goBack, setOptions, navigate, pop } = useNavigation();
 
   const categories = useSelector((store) => store.categories.categories);
   const commitments = useSelector((store) => store.commitments.commitments);
   const selectedCommitment = useMemo(() => {
-    commitments.find((commitment) => commitment.id == id);
-  });
+    return commitments.find((commitment) => commitment.id == id);
+  }, [id, commitments]);
 
   const [inputCommitment, setInputCommitment] = useState({
     ...new Commitment(),
@@ -433,7 +433,7 @@ const ManageCommitment = ({ id, data }) => {
                 onPress={() => {
                   Alert.alert(
                     "Confirm Deletion",
-                    `Are you sure you want to delete the ${selectedCategory.name}?`,
+                    `Are you sure you want to delete the ${selectedCommitment.name}?`,
                     [
                       {
                         text: "Cancel",
@@ -444,7 +444,7 @@ const ManageCommitment = ({ id, data }) => {
                         style: "destructive",
                         onPress: () => {
                           dispatch(deleteCommitment(id));
-                          goBack();
+                          pop(2);
                         },
                       },
                     ],
