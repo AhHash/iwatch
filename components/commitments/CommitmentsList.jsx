@@ -354,6 +354,7 @@ const styles = StyleSheet.create({
   noCommitmentsContainer: {
     margin: 10,
     rowGap: 20,
+    zIndex: -3,
   },
   noCommitmentsButton: {
     alignSelf: "center",
