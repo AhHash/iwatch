@@ -23,6 +23,7 @@ const CommitmentsList = ({
     category: sortCategory = "all",
     type: sortType = "all",
     status: sortStatus = "all",
+    query,
   } = {},
   showCategories,
   showButtons,
@@ -63,6 +64,12 @@ const CommitmentsList = ({
   if (sortStatus && sortStatus != "all") {
     baseCommitments = baseCommitments.filter(
       (commitment) => commitment.status == sortStatus
+    );
+  }
+
+  if (query) {
+    baseCommitments = baseCommitments.filter((commitment) =>
+      commitment.name.toLowerCase().includes(query.toLowerCase())
     );
   }
 

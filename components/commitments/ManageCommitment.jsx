@@ -49,6 +49,7 @@ const ManageCommitment = ({ id, data }) => {
     ...new Commitment(),
     ...data,
   });
+
   const [errors, setErrors] = useState([]);
   const [openPickers, setOpenPickers] = useState({
     category: false,

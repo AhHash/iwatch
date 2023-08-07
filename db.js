@@ -2,6 +2,8 @@ import { openDatabase } from "expo-sqlite";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { baseCategories } from "./constants/data";
+import Category from "./models/Category";
+import Commitment from "./models/Commitment";
 
 const db = openDatabase("iWatch.db");
 
@@ -20,7 +22,7 @@ new Promise((resolve, reject) => {
   });
 }); // .then((res) => console.log(res));
 
-export const init = async () => {
+export const createTables = async () => {
   const categoriesPromise = new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
@@ -48,7 +50,7 @@ export const init = async () => {
       tx.executeSql(
         ` CREATE TABLE IF NOT EXISTS commitments
         (id INTEGER PRIMARY KEY NOT NULL,
-        name TEXT NOT NULL UNIQUE CHECK(length(name) > 0),
+        name TEXT NOT NULL CHECK(length(name) > 0),
         imgUri NUMERIC,
         imgLocal INTEGER NOT NULL DEFAULT '0',
         totalEpisodes INTEGER NOT NULL,
@@ -72,6 +74,49 @@ export const init = async () => {
   });
 
   return Promise.all([categoriesPromise, commitmentsPromise]);
+};
+
+export const init = async () => {
+  if (await AsyncStorage.getItem("DatabaseNotUpdated")) {
+    const categories = await getAll("categories");
+    const commitments = await getAll("commitments");
+
+    await reset();
+    await createTables();
+
+    for (const { name, colorCode, img } of categories) {
+      addOne(new Category(name, colorCode, img));
+    }
+    for (const {
+      name,
+      imgUri,
+      imgLocal,
+      totalEpisodes,
+      currentEpisode,
+      category,
+      description,
+      status,
+      type,
+    } of commitments) {
+      addOne(
+        new Commitment(
+          name,
+          imgUri,
+          imgLocal,
+          totalEpisodes,
+          currentEpisode,
+          category,
+          description,
+          status,
+          type
+        )
+      );
+    }
+
+    AsyncStorage.setItem("DatabaseNotUpdated", true);
+  } else {
+    await createTables();
+  }
 };
 
 export const initializeBaseCategories = async () => {

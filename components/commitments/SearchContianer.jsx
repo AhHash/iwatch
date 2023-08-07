@@ -9,6 +9,7 @@ const SearchContianer = ({ onValueChange }) => {
   const categories = useSelector((store) => store.categories.categories);
 
   const [searchInputs, setSearchInputs] = useState({
+    query: null,
     category: null,
     type: null,
     status: null,
@@ -44,7 +45,16 @@ const SearchContianer = ({ onValueChange }) => {
     <View style={styles.container}>
       <View style={styles.upperContainer}>
         <View style={styles.textInputContainer}>
-          <TextInput style={styles.textInput} placeholder="Type to search..." />
+          <TextInput
+            style={styles.textInput}
+            placeholder="Type to search..."
+            value={searchInputs.query}
+            onChangeText={(text) => {
+              setSearchInputs((previousValues) => {
+                return { ...previousValues, query: text };
+              });
+            }}
+          />
         </View>
         <View style={[styles.pickerContainer, styles.sortPickerContainer]}>
           <Text style={styles.text}>Status</Text>
