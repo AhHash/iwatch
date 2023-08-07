@@ -77,7 +77,11 @@ export const createTables = async () => {
 };
 
 export const init = async () => {
-  if (await AsyncStorage.getItem("DatabaseNotUpdated")) {
+  AsyncStorage.removeItem("DatabaseNotUpdated");
+  if ((await AsyncStorage.getItem("DatabaseUpdated")) == "true") {
+    await createTables();
+    await initializeBaseCategories();
+  } else {
     const categories = await getAll("categories");
     const commitments = await getAll("commitments");
 
@@ -113,9 +117,7 @@ export const init = async () => {
       );
     }
 
-    AsyncStorage.setItem("DatabaseNotUpdated", true);
-  } else {
-    await createTables();
+    await AsyncStorage.setItem("DatabaseUpdated", "true");
   }
 };
 

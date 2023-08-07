@@ -2,6 +2,7 @@ import {
   ActivityIndicator,
   Keyboard,
   StyleSheet,
+  Text,
   TextInput,
   TouchableWithoutFeedback,
   View,
@@ -18,6 +19,7 @@ const FetchCommitmentsOverlay = ({ navigation: { navigate } }) => {
   const [searchInput, setSearchInput] = useState("");
   const [commitments, setCommitments] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [showNoResults, setShowNoResults] = useState(false);
 
   useLayoutEffect(() => {
     setCommitments([]);
@@ -30,6 +32,7 @@ const FetchCommitmentsOverlay = ({ navigation: { navigate } }) => {
       if (query.length >= 3) {
         id = setTimeout(async () => {
           setIsLoading(() => true);
+          setShowNoResults(true);
 
           const result = await fetchCommitments(query);
           const initialCommitments = result.results.slice(0, 10);
@@ -79,12 +82,12 @@ const FetchCommitmentsOverlay = ({ navigation: { navigate } }) => {
                   return commitment;
                 } catch (error) {}
               }
-              setIsLoading(() => false);
             })
           );
           const filteredCommitments = resultCommitments.filter(
             (commitment) => commitment
           );
+          setIsLoading(() => false);
           setCommitments(filteredCommitments);
         }, 1000);
       }
@@ -108,9 +111,9 @@ const FetchCommitmentsOverlay = ({ navigation: { navigate } }) => {
           />
         </View>
         <View style={styles.listContainer}>
-          {isLoading && !commitments.length ? (
+          {isLoading ? (
             <ActivityIndicator style={styles.activityIndicator} size="large" />
-          ) : (
+          ) : commitments.length ? (
             <CommitmentsList
               data={commitments}
               itemOnPress={(commitment) => {
@@ -124,6 +127,14 @@ const FetchCommitmentsOverlay = ({ navigation: { navigate } }) => {
               hideStatus
               addOnEmptyText="Search and results will appear here!"
             />
+          ) : (
+            showNoResults && (
+              <View>
+                <Text style={styles.noCommitmentsText}>
+                  Sorry. Your search did not yield any results {":("}
+                </Text>
+              </View>
+            )
           )}
         </View>
       </View>
@@ -143,11 +154,11 @@ const styles = StyleSheet.create({
     borderBottomColor: globalColors.borderColor,
     borderBottomWidth: 4,
   },
-  rowTitle: {
-    color: globalColors.textMain,
-    fontSize: 16,
+  noCommitmentsText: {
+    color: globalColors.textAccent,
+    fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 10,
+    marginTop: 10,
   },
   inputText: {
     backgroundColor: globalColors.inputBackground,

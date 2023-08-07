@@ -27,7 +27,6 @@ preventAutoHideAsync();
 
 const initializeDatabase = async () => {
   await init();
-  await initializeBaseCategories();
 };
 
 const BottomTabs = createBottomTabNavigator();
